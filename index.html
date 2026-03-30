@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SpectraVue — Interactive Flat Panels</title>
   <meta name="description"
-    content="SpectraVue — The world's most advanced interactive flat panels for enterprise and education.">
+    content="SpectraVue — The India's most advanced interactive flat panels for enterprise and education.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -2489,7 +2489,31 @@
         padding: 105px 0 60px
       }
 
-      .hero h1 {
+      --- .sc-side-nm {
+        font-family: 'Syne', sans-serif;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: .1em;
+        color: rgba(255, 255, 255, .85)
+      }
+
+      .sc-side-sq {
+        width: 10px;
+        height: 10px;
+        background: var(--blue);
+        border-radius: 4px;
+        flex-shrink: 0
+      }
+
+
+
+      .sc-body {
+        display: grid;
+        grid-template-columns: 115px 1fr;
+        height: calc(100% - 30px)
+      }
+
+      --- .hero h1 {
         font-size: clamp(2.6rem, 10vw, 4rem)
       }
 
@@ -2630,6 +2654,61 @@
       .hero h1 {
         font-size: 2.6rem
       }
+
+      .sc-side-nm {
+        font-family: 'Syne', sans-serif;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: .1em;
+        color: rgba(255, 255, 255, .85)
+      }
+
+      .sc-side-sq {
+        width: 10px;
+        height: 10px;
+        background: var(--blue);
+        border-radius: 4px;
+        flex-shrink: 0
+      }
+
+
+
+      .sc-body {
+        display: grid;
+        grid-template-columns: 115px 1fr;
+        height: calc(100% - 30px)
+      }
+
+      /* Reduce KPI container spacing */
+      .sc-kpis {
+        gap: 8px;
+      }
+
+      /* Make each KPI flexible */
+      .sc-kpi {
+        padding: 10px 8px;
+      }
+
+      /* 🔥 MAIN FIX → reduce big numbers */
+      .sc-kpi-v {
+        font-size: 10px;
+        /* was too big */
+        line-height: 1.1;
+      }
+
+      /* Reduce label text */
+      .sc-kpi-l {
+        font-size: 5px;
+        line-height: 1.2;
+      }
+
+      /* Prevent overflow */
+      .sc-kpi {
+        min-width: 0;
+        overflow: hidden;
+      }
+
+
     }
   </style>
 </head>
@@ -2682,7 +2761,7 @@
     <div class="hero-copy">
       <div class="hero-pill"><span class="hero-pill-dot"></span>Android 14 — Now Available</div>
       <h1>Interactive Panels,<br><em>Reimagined.</em></h1>
-      <p class="hero-sub">The world's most advanced interactive flat panels for enterprise and education. Zero-lag
+      <p class="hero-sub">The India's most advanced interactive flat panels for enterprise and education. Zero-lag
         touch. Crystal clarity. Built to transform every space.</p>
       <div class="hero-btns">
         <a href="#products" class="btn btn-primary"><i class="fas fa-arrow-right"></i>Explore Panels</a>
@@ -2724,7 +2803,7 @@
               <div class="sc-dot"></div>
               <div class="sc-dot"></div>
               <div class="sc-dot"></div>
-              <div class="sc-url"><span>spectravue.com/dashboard — SpectraVue OS 3.0</span></div>
+              <div class="sc-url"><span>spectravue.com/dashboard — Android OS 14.0</span></div>
             </div>
             <!-- Canvas -->
             <div class="sc-body">
@@ -2882,21 +2961,21 @@
   <!-- TICKER -->
   <div class="ticker">
     <div class="ticker-inner">
-      <span class="ticker-item">SpectraVue OS 3.0<div class="tsep"></div></span>
+      <span class="ticker-item">Android OS 14.0<div class="tsep"></div></span>
       <span class="ticker-item">4K Ultra HD<div class="tsep"></div></span>
       <span class="ticker-item">40-Point Multi-Touch<div class="tsep"></div></span>
       <span class="ticker-item">&lt;5ms Latency<div class="tsep"></div></span>
       <span class="ticker-item">AES-256 Security<div class="tsep"></div></span>
       <span class="ticker-item">AI Noise Cancellation<div class="tsep"></div></span>
-      <span class="ticker-item">1.5-Year Warranty<div class="tsep"></div></span>
+      <span class="ticker-item">18-Months Warranty<div class="tsep"></div></span>
       <span class="ticker-item">Zoom · Teams · Meet<div class="tsep"></div></span>
-      <span class="ticker-item">SpectraVue OS 3.0<div class="tsep"></div></span>
+      <span class="ticker-item">Android OS 14.0<div class="tsep"></div></span>
       <span class="ticker-item">4K Ultra HD<div class="tsep"></div></span>
       <span class="ticker-item">40-Point Multi-Touch<div class="tsep"></div></span>
       <span class="ticker-item">&lt;5ms Latency<div class="tsep"></div></span>
       <span class="ticker-item">AES-256 Security<div class="tsep"></div></span>
       <span class="ticker-item">AI Noise Cancellation<div class="tsep"></div></span>
-      <span class="ticker-item">1.5-Year Warranty<div class="tsep"></div></span>
+      <span class="ticker-item">18-Months Warranty<div class="tsep"></div></span>
       <span class="ticker-item">Zoom · Teams · Meet<div class="tsep"></div></span>
     </div>
   </div>
