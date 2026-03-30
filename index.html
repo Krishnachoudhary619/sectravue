@@ -3678,7 +3678,7 @@
               <div class="c-val">Shop no 3 near sai mandir, kamatghar bhiwandi - 421305</div>
             </div>
           </div>
-          <div class="c-item">
+          <div class="c-item" id="waContact" style="cursor:pointer;">
             <div class="c-ic"><i class="fab fa-whatsapp"></i></div>
             <div>
               <div class="c-lbl">WhatsApp</div>
@@ -3811,6 +3811,16 @@
 
   <script>
 
+    document.getElementById('waContact').addEventListener('click', () => {
+      const msg = encodeURIComponent(
+        "I want to know more about the products"
+      );
+
+      window.open(
+        'https://wa.me/919321618509?text=' + msg,
+        '_blank'
+      );
+    });
     document.querySelectorAll('.wa-btn').forEach(btn => {
       btn.addEventListener('click', () => {
 
