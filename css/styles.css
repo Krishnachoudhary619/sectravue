@@ -1611,6 +1611,10 @@
       transform: translateY(-5px)
     }
 
+    .prod-card[data-href] {
+      cursor: pointer
+    }
+
     .prod-vis {
       height: 240px;
       position: relative;

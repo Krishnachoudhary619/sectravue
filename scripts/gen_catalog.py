@@ -936,7 +936,7 @@ def product_gallery(p):
 
 def catalog_card(p, href_prefix="products/", price_href="#contact", img_prefix=""):
     style = f' style="{p["accent"]}"' if p["accent"] else ""
-    return f"""        <div class="prod-card reveal" data-cat="{p['cat']}">
+    return f"""        <div class="prod-card reveal" data-cat="{p['cat']}" data-href="{href_prefix}{p['slug']}.html">
           <div class="prod-vis has-photo" style="background:{p['vis_bg']}">
             {product_img(p, img_prefix)}
             <div class="cptag" style="position:absolute;bottom:10px">{escape(p['tag'])}</div>

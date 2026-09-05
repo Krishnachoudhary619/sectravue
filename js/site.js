@@ -87,6 +87,14 @@ const obs = new IntersectionObserver(entries => {
 }, { threshold: .1 });
 document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el => obs.observe(el));
 
+/* Product card → detail page */
+document.querySelectorAll('.prod-card[data-href]').forEach(card => {
+  card.addEventListener('click', e => {
+    if (e.target.closest('a,button')) return;
+    window.location.href = card.dataset.href;
+  });
+});
+
 /* Product filter */
 window.filterProd = function filterProd(cat, btn) {
   document.querySelectorAll('.prod-tab').forEach(t => t.classList.remove('active'));
