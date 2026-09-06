@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 """Generate homepage catalog cards and product pages from brochure data."""
+import json
+from datetime import date
 from pathlib import Path
 from html import escape
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTS_DIR = ROOT / "products"
 PRODUCTS_DIR.mkdir(exist_ok=True)
+
+# Official site and socials. Used for canonicals, OG, schema, and sitemap.
+SITE_URL = "https://spectravue.co.in"
+LINKEDIN_URL = "https://www.linkedin.com/company/spectravue-technology/"
+INSTAGRAM_URL = "https://www.instagram.com/spectravue.india/"
 
 PRODUCT_OPTIONS = [
     "Classroom Pro 65\"",
@@ -26,6 +33,150 @@ PRODUCT_OPTIONS = [
     "Fleet IQ CMS",
     "Bulk / Enterprise Procurement",
 ]
+
+# Search titles (~50–60 chars), descriptions (~140–160 chars), and image alts
+# that name the form factor — not just the product nickname.
+SEO = {
+    "angle-pro": {
+        "title": "Angle Pro Digital Easel Display (32–43\") | SpectraVue",
+        "description": "Premium 32\" and 43\" angled digital easel displays for boutiques, retail floors, and exhibitions. Android signage, 400 nits. Request a quote.",
+        "alt": "SpectraVue Angle Pro 32 to 43 inch digital easel display",
+        "category": "Digital Easel Display",
+    },
+    "vistakiosk": {
+        "title": "VistaKiosk Digital Totem & Kiosk (32–65\") | SpectraVue",
+        "description": "Freestanding digital totems and interactive kiosks from 32\" to 65\" for malls, airports, and lobbies. Android, 400 nits. Request pricing.",
+        "alt": "SpectraVue VistaKiosk freestanding digital totem and kiosk",
+        "category": "Digital Totem",
+    },
+    "adpole": {
+        "title": "AdPole Freestanding Digital Totem (24–43\") | SpectraVue",
+        "description": "Slim advertising totems in 24\", 32\", and 43\" for malls, hotels, and events. Android digital signage built for high-traffic spaces.",
+        "alt": "SpectraVue AdPole slim freestanding digital totem",
+        "category": "Digital Totem",
+    },
+    "edgeplay": {
+        "title": "EdgePlay Flush-Mount Wall Display (24–43\") | SpectraVue",
+        "description": "Portrait flush-mount wall displays in 24–43\" for retail, hotels, and elevators. Slim IPS Android digital signage. Request a quote.",
+        "alt": "SpectraVue EdgePlay flush-mount portrait wall display",
+        "category": "Wall-Mount Digital Display",
+    },
+    "adzoview": {
+        "title": "AdzoView Cinematic Wall Panel (24–65\") | SpectraVue",
+        "description": "Ultra-slim flush-mount digital signage from 24\" Full HD to 65\" UHD for airports, malls, and showrooms. Android playback. Get a quote.",
+        "alt": "SpectraVue AdzoView ultra-slim cinematic wall display",
+        "category": "Cinematic Wall Panel",
+    },
+    "brandlite": {
+        "title": "BrandLite 32\" Digital Standee | SpectraVue",
+        "description": "Premium 32\" digital standee for retail floors, lobbies, and brand activations. Optional brochure racks and smart content delivery.",
+        "alt": "SpectraVue BrandLite 32 inch digital standee",
+        "category": "Digital Standee",
+    },
+    "rackpro": {
+        "title": "RackPro Display Rack with 24\" Screen | SpectraVue",
+        "description": "Four-shelf merchandising rack with a top-mounted 24\" digital screen for pharmacies, malls, exhibitions, and product launches.",
+        "alt": "SpectraVue RackPro multi-tier display rack with digital screen",
+        "category": "Digital Display Rack",
+    },
+    "luma": {
+        "title": "Luma 10.1\" Interactive Desktop Display | SpectraVue",
+        "description": "10.1\" countertop interactive unit with 10-point touch and cloud or plug-and-play playback for POS, reception, and showrooms.",
+        "alt": "SpectraVue Luma 10.1 inch interactive desktop display",
+        "category": "Interactive Desktop Display",
+    },
+    "nexa": {
+        "title": "Nexa Counter Display (3–21\") | SpectraVue",
+        "description": "Ultra-slim Android counter displays from 3\" to 21\" for retail POS, pharmacies, and hospitality. Optional touch and cloud control.",
+        "alt": "SpectraVue Nexa ultra-slim counter display",
+        "category": "Counter Display",
+    },
+    "shelfscape": {
+        "title": "ShelfScape Digital Shelf Header (24–48\") | SpectraVue",
+        "description": "Ultra-wide digital shelf headers in 24\", 37\", and 48\" for supermarket and retail aisle promotions. High-brightness Android signage.",
+        "alt": "SpectraVue ShelfScape ultra-wide digital shelf header",
+        "category": "Digital Shelf Header",
+    },
+    "edgevue": {
+        "title": "EdgeVue Shelf-Edge Screen (23.1–47.1\") | SpectraVue",
+        "description": "Stretched shelf-edge and VuePanel bars for real-time retail promotions, with VueCore wireless control. 23.1\", 35\", and 47.1\".",
+        "alt": "SpectraVue EdgeVue shelf-edge stretch display bar",
+        "category": "Shelf-Edge Display",
+    },
+    "fleet-iq": {
+        "title": "Fleet IQ Cloud CMS for Digital Signage | SpectraVue",
+        "description": "Centralized cloud CMS to schedule, monitor, and manage every SpectraVue screen — from one site to multi-city fleets.",
+        "alt": "SpectraVue Fleet IQ cloud digital signage CMS dashboard",
+        "category": "Digital Signage CMS",
+    },
+}
+
+HOME_SEO = {
+    "title": "SpectraVue | Interactive Panels, Kiosks & Digital Signage",
+    "description": "SpectraVue makes interactive flat panels, digital totems, wall displays, retail shelf screens, and Fleet IQ CMS for education, enterprise, and retail in India.",
+}
+
+
+def seo_for(slug):
+    return SEO[slug]
+
+
+def abs_url(path):
+    return f"{SITE_URL.rstrip('/')}/{path.lstrip('/')}"
+
+
+def json_ld(data):
+    return (
+        '<script type="application/ld+json">\n'
+        f"  {json.dumps(data, ensure_ascii=True)}\n"
+        "</script>"
+    )
+
+
+def seo_head(*, title, description, canonical, image, page_type="product", extra_json=None):
+    og_type = "product" if page_type == "product" else "website"
+    tags = [
+        f"  <title>{escape(title)}</title>",
+        f'  <meta name="description" content="{escape(description)}">',
+        '  <meta name="robots" content="index, follow">',
+        f'  <link rel="canonical" href="{escape(canonical)}">',
+        f'  <meta property="og:type" content="{og_type}">',
+        f'  <meta property="og:site_name" content="SpectraVue">',
+        f'  <meta property="og:locale" content="en_IN">',
+        f'  <meta property="og:title" content="{escape(title)}">',
+        f'  <meta property="og:description" content="{escape(description)}">',
+        f'  <meta property="og:url" content="{escape(canonical)}">',
+        f'  <meta property="og:image" content="{escape(image)}">',
+        '  <meta name="twitter:card" content="summary_large_image">',
+        f'  <meta name="twitter:title" content="{escape(title)}">',
+        f'  <meta name="twitter:description" content="{escape(description)}">',
+        f'  <meta name="twitter:image" content="{escape(image)}">',
+    ]
+    if extra_json:
+        for block in extra_json:
+            tags.append(f"  {json_ld(block)}")
+    return "\n".join(tags)
+
+
+def org_schema():
+    return {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SpectraVue",
+        "url": SITE_URL,
+        "logo": abs_url("spectravue-logo.png"),
+        "email": "spectravue.ind@gmail.com",
+        "telephone": "+91-9321618509",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Anupam Villa, Kale Marg, Bail Bajar, Kurla",
+            "addressLocality": "Mumbai",
+            "addressRegion": "Maharashtra",
+            "postalCode": "400070",
+            "addressCountry": "IN",
+        },
+        "sameAs": [LINKEDIN_URL, INSTAGRAM_URL],
+    }
 
 
 def screen():
@@ -727,14 +878,14 @@ def footer(prefix, product_links):
       <div class="footer-top">
         <div>
           <a href="{home}" class="logo">
-            <img src="{logo}" alt="SpectraVue Logo" class="logo-img">
+            <img src="{logo}" alt="SpectraVue" class="logo-img">
           </a>
           <p class="footer-desc">Leading manufacturer of interactive panels and digital display solutions for enterprise, education, retail, and public spaces.</p>
           <div class="socials">
             <a href="#" class="soc"><i class="fab fa-twitter"></i></a>
-            <a href="https://www.linkedin.com/company/spectravue-tech/" class="soc"><i class="fab fa-linkedin-in"></i></a>
+            <a href="{LINKEDIN_URL}" class="soc" rel="noopener noreferrer" aria-label="SpectraVue on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
             <a href="#" class="soc"><i class="fab fa-youtube"></i></a>
-            <a href="#" class="soc"><i class="fab fa-instagram"></i></a>
+            <a href="{INSTAGRAM_URL}" class="soc" rel="noopener noreferrer" aria-label="SpectraVue on Instagram"><i class="fab fa-instagram"></i></a>
           </div>
         </div>
         <div class="fc">
@@ -865,7 +1016,7 @@ def header_block(ch):
     <div class="container">
       <nav class="nav">
         <a href="{ch['home']}" class="logo">
-          <img src="{ch['logo']}" alt="SpectraVue Logo" class="logo-img">
+            <img src="{ch['logo']}" alt="SpectraVue" class="logo-img">
         </a>
         {ch['nav']}
         <div class="nav-cta">
@@ -902,33 +1053,31 @@ GALLERY_COUNTS = {
 
 
 def product_img(p, prefix):
+    alt = seo_for(p["slug"])["alt"]
     return (
         f'<img class="prod-photo" src="{prefix}images/products/{p["slug"]}.jpg" '
-        f'alt="{escape(p["name"])}">'
+        f'alt="{escape(alt)}">'
     )
 
 
 def product_gallery(p):
     slug = p["slug"]
+    alt = seo_for(slug)["alt"]
     count = GALLERY_COUNTS.get(slug, 1)
-    main = f'<img class="pd-hero-photo" src="../images/products/{slug}.jpg" alt="{escape(p["name"])}">'
+    main = f'<img class="pd-hero-photo" src="../images/products/{slug}.jpg" alt="{escape(alt)}">'
     if count <= 1:
         return f'<div class="pd-hero-vis">{main}</div>'
     thumbs = []
     for i in range(1, count + 1):
-        src = f"../images/products/{slug}/{i:02d}.jpg" if i > 1 else f"../images/products/{slug}.jpg"
-        if i > 1:
-            src = f"../images/products/{slug}/{i:02d}.jpg"
-        else:
-            src = f"../images/products/{slug}/01.jpg"
+        src = f"../images/products/{slug}/{i:02d}.jpg"
         active = " active" if i == 1 else ""
         thumbs.append(
             f'<button type="button" class="pd-thumb{active}" data-src="{src}">'
-            f'<img src="{src}" alt="{escape(p["name"])} view {i}"></button>'
+            f'<img src="{src}" alt="{escape(alt)} — view {i}"></button>'
         )
     return (
         '<div class="pd-gallery">'
-        f'<div class="pd-hero-vis"><img class="pd-hero-photo" src="../images/products/{slug}/01.jpg" alt="{escape(p["name"])}"></div>'
+        f'<div class="pd-hero-vis"><img class="pd-hero-photo" src="../images/products/{slug}/01.jpg" alt="{escape(alt)}"></div>'
         f'<div class="pd-thumbs">{"".join(thumbs)}</div>'
         "</div>"
     )
@@ -962,54 +1111,63 @@ def related_cards(slugs):
     return "\n".join(cards)
 
 
-HOME_FOOTER_LINKS = [
-    ("#products", "Interactive Panels"),
-    ("products/angle-pro.html", "Angle Pro"),
-    ("products/vistakiosk.html", "VistaKiosk"),
-    ("products/adpole.html", "AdPole"),
-    ("products/edgeplay.html", "EdgePlay"),
-    ("products/adzoview.html", "AdzoView"),
-    ("products/brandlite.html", "BrandLite"),
-    ("products/nexa.html", "Nexa & Luma"),
-    ("products/fleet-iq.html", "Fleet IQ"),
+HOME_FOOTER_LINKS = [("#products", "Interactive Panels")] + [
+    (f"products/{p['slug']}.html", p["name"]) for p in CATALOG
 ]
 
 
 def page_footer_links(current):
-    links = [("../index.html#products", "Interactive Panels")]
-    for p in CATALOG:
-        if p["slug"] == current:
-            continue
-        if p["slug"] in ("luma", "nexa", "edgevue", "shelfscape", "rackpro") and current not in (
-            "luma",
-            "nexa",
-            "edgevue",
-            "shelfscape",
-            "rackpro",
-            "fleet-iq",
-        ):
-            continue
-        links.append((f"{p['slug']}.html", p["name"]))
-    # keep footer compact
     compact = [("../index.html#products", "All Products")]
-    for slug, label in [
-        ("angle-pro", "Angle Pro"),
-        ("vistakiosk", "VistaKiosk"),
-        ("adpole", "AdPole"),
-        ("edgeplay", "EdgePlay"),
-        ("adzoview", "AdzoView"),
-        ("brandlite", "BrandLite"),
-        ("nexa", "Nexa & Luma"),
-        ("fleet-iq", "Fleet IQ"),
-    ]:
-        if slug != current:
-            compact.append((f"{slug}.html", label))
+    for p in CATALOG:
+        if p["slug"] != current:
+            compact.append((f"{p['slug']}.html", p["name"]))
     return compact
+
+
+def product_schema(p, page, seo):
+    slug = p["slug"]
+    data = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": p["name"],
+        "description": seo["description"],
+        "image": abs_url(f"images/products/{slug}.jpg"),
+        "brand": {"@type": "Brand", "name": "SpectraVue"},
+        "sku": p["sku"].split(" · ")[0],
+        "category": seo["category"],
+        "url": abs_url(f"products/{slug}.html"),
+        "manufacturer": {"@type": "Organization", "name": "SpectraVue"},
+    }
+    if page["sizes"]:
+        data["size"] = ", ".join(page["sizes"])
+    return data
+
+
+def breadcrumb_schema(p):
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": abs_url("")},
+            {"@type": "ListItem", "position": 2, "name": "Products", "item": abs_url("index.html#products")},
+            {"@type": "ListItem", "position": 3, "name": p["name"], "item": abs_url(f"products/{p['slug']}.html")},
+        ],
+    }
 
 
 def write_product_page(p):
     page = PAGES[p["slug"]]
+    seo = seo_for(p["slug"])
     ch = chrome("../")
+    favicon = "../spectravue-logo.png"
+    head_seo = seo_head(
+        title=seo["title"],
+        description=seo["description"],
+        canonical=abs_url(f"products/{p['slug']}.html"),
+        image=abs_url(f"images/products/{p['slug']}.jpg"),
+        page_type="product",
+        extra_json=[org_schema(), product_schema(p, page, seo), breadcrumb_schema(p)],
+    )
     sizes_block = ""
     if page["sizes"]:
         sizes_block = f"""
@@ -1040,8 +1198,8 @@ def write_product_page(p):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{escape(p['name'])} — SpectraVue</title>
-  <meta name="description" content="{escape(p['summary'])}">
+{head_seo}
+  <link rel="icon" href="{favicon}" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -1269,9 +1427,46 @@ def patch_index():
     print("patched index.html")
 
 
+def write_robots_and_sitemap():
+    today = date.today().isoformat()
+    (ROOT / "robots.txt").write_text(
+        "User-agent: *\n"
+        "Allow: /\n"
+        f"Sitemap: {abs_url('sitemap.xml')}\n"
+    )
+    urls = [
+        ("", "1.0"),
+    ]
+    for p in CATALOG:
+        urls.append((f"products/{p['slug']}.html", "0.8"))
+    seen = set()
+    entries = []
+    for path, priority in urls:
+        loc = abs_url(path) if path else f"{SITE_URL.rstrip('/')}/"
+        if loc in seen:
+            continue
+        seen.add(loc)
+        entries.append(
+            "  <url>\n"
+            f"    <loc>{loc}</loc>\n"
+            f"    <lastmod>{today}</lastmod>\n"
+            f"    <changefreq>weekly</changefreq>\n"
+            f"    <priority>{priority}</priority>\n"
+            "  </url>"
+        )
+    (ROOT / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "\n".join(entries)
+        + "\n</urlset>\n"
+    )
+    print("wrote robots.txt and sitemap.xml")
+
+
 if __name__ == "__main__":
     import sys
     if "--index" in sys.argv:
         patch_index()
     for p in CATALOG:
         write_product_page(p)
+    write_robots_and_sitemap()
