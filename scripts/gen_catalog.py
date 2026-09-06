@@ -937,7 +937,7 @@ def product_gallery(p):
 def catalog_card(p, href_prefix="products/", price_href="#contact", img_prefix=""):
     style = f' style="{p["accent"]}"' if p["accent"] else ""
     return f"""        <div class="prod-card reveal" data-cat="{p['cat']}" data-href="{href_prefix}{p['slug']}.html">
-          <div class="prod-vis has-photo" style="background:{p['vis_bg']}">
+          <div class="prod-vis has-photo">
             {product_img(p, img_prefix)}
             <div class="cptag" style="position:absolute;bottom:10px">{escape(p['tag'])}</div>
           </div>
@@ -1013,7 +1013,7 @@ def write_product_page(p):
     sizes_block = ""
     if page["sizes"]:
         sizes_block = f"""
-  <section class="products" style="padding-top:0">
+  <section class="pd-sizes">
     <div class="container">
       <div class="reveal">
         <div class="s-label">Available Sizes</div>
@@ -1074,6 +1074,7 @@ def write_product_page(p):
       </div>
     </div>
   </section>
+{sizes_block}
   <section class="features">
     <div class="container">
       <div class="feat-hd reveal">
@@ -1083,7 +1084,6 @@ def write_product_page(p):
       {feat_grid(page['features'])}
     </div>
   </section>
-{sizes_block}
   <section class="specs-section">
     <div class="container">
       <div class="specs-hd reveal">
