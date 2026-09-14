@@ -31,7 +31,7 @@ export function HeroCarousel() {
       onTouchEnd={onTouchEnd}
     >
       <h1 className="sr-only">SpectraVue interactive panels and digital signage</h1>
-      <div className="relative mx-auto aspect-[4/3] w-full max-h-[360px] md:aspect-auto md:h-[min(86vh,880px)] md:max-h-[880px] md:min-h-[480px]">
+      <div className="relative mx-auto aspect-[3/2] w-full md:aspect-auto md:h-[min(86vh,880px)] md:max-h-[880px] md:min-h-[480px]">
         {BANNERS.map((src, idx) => (
           <Image
             key={src}
@@ -39,7 +39,7 @@ export function HeroCarousel() {
             alt={`SpectraVue collection banner ${idx + 1}`}
             fill
             priority={idx === 0}
-            className={`object-cover object-center transition-opacity duration-700 md:object-contain ${idx === i ? "opacity-100" : "opacity-0"}`}
+            className={`object-contain object-center transition-opacity duration-700 ${idx === i ? "opacity-100" : "opacity-0"}`}
             sizes="100vw"
           />
         ))}
