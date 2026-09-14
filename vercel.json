@@ -1,6 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "installCommand": "npm install"
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/products/:slug.html", "destination": "/products/:slug", "permanent": true }
+  ]
 }

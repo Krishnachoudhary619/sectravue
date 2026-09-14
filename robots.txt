@@ -1,0 +1,7 @@
+User-Agent: *
+Allow: /
+Disallow: /cart
+Disallow: /search
+
+Host: https://spectravue.co.in
+Sitemap: https://spectravue.co.in/sitemap.xml

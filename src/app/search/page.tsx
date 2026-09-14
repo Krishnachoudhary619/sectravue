@@ -1,27 +1,12 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBox } from "@/components/SearchBox";
 import { searchProducts } from "@/data/products";
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}): Promise<Metadata> {
-  const { q = "" } = await searchParams;
-  return {
-    title: q ? `Search “${q}”` : "Search",
-    robots: { index: false, follow: true },
-    alternates: { canonical: "/search" },
-  };
-}
-
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
-  const { q = "" } = await searchParams;
+export default function SearchPage() {
+  const q = useSearchParams().get("q") ?? "";
   const results = searchProducts(q);
 
   return (
